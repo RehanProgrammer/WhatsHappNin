@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "505400779827",
+    "firebase_url": "https://what-shappnin.firebaseio.com",
+    "project_id": "what-shappnin",
+    "storage_bucket": "what-shappnin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505400779827:android:782b66d1d8595934",
+        "android_client_info": {
+          "package_name": "com.example.dipapc.whatshappnin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505400779827-kg3roqak74va94us2ifn9p178ial5mpb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfaWX1TaQhjd0z2Mn-0w7sWD_S2RXA_Po"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

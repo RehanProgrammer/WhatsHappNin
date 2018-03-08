@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:dither="true"
+    android:shape="rectangle">
+    <corners
+        android:radius="100dp"
+        android:topLeftRadius="400dp"
+        android:topRightRadius="400dp"
+        android:bottomLeftRadius="400dp"
+        android:bottomRightRadius="400dp" />
+
+    <solid android:color="@color/btn_logut_bg"/>
+
+</shape>
