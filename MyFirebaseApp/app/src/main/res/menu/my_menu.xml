@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home"
+        android:checkable="false"
+        android:icon="@drawable/home"
+        android:title="home"
+        android:visible="true"
+        app:showAsAction="always">
+
+    </item>
+    <item
+        android:id="@+id/friendlist"
+        android:icon="@drawable/ic_action_friend"
+        android:title="Add friend"
+        app:showAsAction="always">
+
+    </item>
+    <item
+        android:id="@+id/Profile"
+        android:icon="@drawable/ic_action_profile"
+        android:title="View profile"
+        app:showAsAction="never"
+        >
+
+    </item>
+    <item
+        android:id="@+id/signout"
+        android:title="Sign out"
+        app:showAsAction="never">
+
+    </item>
+
+</menu>
