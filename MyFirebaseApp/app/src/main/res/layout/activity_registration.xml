@@ -9,10 +9,11 @@
     tools:context="com.example.dipapc.myfirebaseapp.RegistrationActivity">
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
 
+        android:layout_centerInParent="true"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -20,8 +21,7 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="3dp"
         app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="true"
-        android:id="@+id/cardView">
+        app:cardUseCompatPadding="true">
 
 
     </android.support.v7.widget.CardView>
@@ -30,14 +30,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/cardView"
-        android:padding="5dp"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:padding="5dp">
 
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="#d2003063"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -91,13 +91,13 @@
                 android:tint="@color/white" />
 
             <EditText
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/imgView_userIcon"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/imgView_userIcon"
                 android:background="@color/editTextBG"
-                android:id="@+id/name"
                 android:hint="Name"
                 android:paddingLeft="20dp"
                 android:textSize="15sp" />
@@ -124,13 +124,13 @@
                 android:tint="@color/white" />
 
             <EditText
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/imgView_passwordIcon"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/imgView_passwordIcon"
                 android:background="@color/editTextBG"
-                android:id="@+id/password"
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:paddingLeft="20dp"
@@ -189,13 +189,13 @@
                 android:tint="@color/white" />
 
             <EditText
+                android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/imgView_emailIcon"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/imgView_emailIcon"
                 android:background="@color/editTextBG"
-                android:id="@+id/email"
                 android:hint="Email"
                 android:paddingLeft="20dp"
                 android:textSize="15sp" />
