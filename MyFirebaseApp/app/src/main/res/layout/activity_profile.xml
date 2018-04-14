@@ -16,6 +16,7 @@
             android:id="@+id/profileimg"
             android:layout_width="match_parent"
             android:layout_height="250dp"
+            android:background="#d2003063"
             app:srcCompat="@drawable/square" />
 
         <TextView

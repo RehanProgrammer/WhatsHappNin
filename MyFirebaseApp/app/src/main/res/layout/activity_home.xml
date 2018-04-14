@@ -5,31 +5,31 @@
     android:id="@+id/ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fcfcfc"
-    android:orientation="vertical"
+    android:background="@android:color/background_light"
     android:gravity="center"
+    android:orientation="vertical"
     android:padding="10dp"
     tools:context="com.example.dipapc.myfirebaseapp.HomeActivity">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <android.support.v7.widget.CardView
-            android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true"
             android:id="@+id/Profile"
             android:layout_width="160dp"
             android:layout_height="190dp"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#daf704"
+                android:background="#d2003063"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -44,7 +44,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Create Profile"
+                    android:autoText="false"
+                    android:text="Edit Profile"
+                    android:textColor="@android:color/background_light"
+                    android:textColorLink="@android:color/background_light"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -59,25 +62,26 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:text="Create your unique profile"
-                    android:textColor="@color/darkblue"
+                    android:text="Edit your unique profile"
+                    android:textColor="@android:color/background_light"
+                    android:textColorLink="@android:color/background_light"
                     android:textStyle="bold" />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true"
             android:id="@+id/map"
             android:layout_width="160dp"
             android:layout_height="190dp"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ee020a"
+                android:background="#d2003063"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -92,9 +96,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="View Maps"
+                    android:text="View Map"
+                    android:textColor="@android:color/background_light"
+                    android:textColorLink="@android:color/background_light"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:textColorLink="@android:color/background_light" />
 
                 <View
                     android:layout_width="match_parent"
@@ -108,7 +115,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="View events near you"
-                    android:textColor="@color/darkblue"
+                    android:textColor="@android:color/background_light"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -136,7 +143,7 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorAccent"
+                android:background="#d2003063"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -152,6 +159,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Event Dashboard"
+                    android:textColor="@color/cardview_light_background"
+                    android:textColorLink="@android:color/background_light"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -167,7 +176,7 @@
                     android:padding="5dp"
                     android:text="See all the events near you"
                     android:textAlignment="center"
-                    android:textColor="@color/darkblue"
+                    android:textColor="@android:color/background_light"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -185,7 +194,7 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorAccent"
+                android:background="#d2003063"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -201,6 +210,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Post Event"
+                    android:textColor="@android:color/background_light"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -216,7 +226,7 @@
                     android:padding="5dp"
                     android:text="Post your event and invite friends"
                     android:textAlignment="center"
-                    android:textColor="@color/darkblue"
+                    android:textColor="@android:color/background_light"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -224,7 +234,6 @@
 
 
     </LinearLayout>
-
 
 
 </LinearLayout>
