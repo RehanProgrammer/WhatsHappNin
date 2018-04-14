@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateEventActivity extends MenuActivity {
+public class CreateEventActivity extends MenuActivity implements View.OnClickListener {
 
     private static final String TAG = "CreateEventActivity";
     private static final int RC_PHOTO_PICKER = 123;
@@ -43,8 +44,10 @@ public class CreateEventActivity extends MenuActivity {
     private EditText eventname;
     private EditText eventdescription;
     private EditText eventlocation;
+    private EditText eventdate,eventtime;
     private ImageView eventpic;
     private Button save;
+    private CheckBox party,study,sport,other;
 
 
     private FirebaseAuth auth;
@@ -57,6 +60,7 @@ public class CreateEventActivity extends MenuActivity {
     private FirebaseStorage storage;
     private StorageReference sref;
     private double lat, lon;
+    private String eventtype ;
 
     private Uri downloadUrl;
 
@@ -99,15 +103,29 @@ public class CreateEventActivity extends MenuActivity {
         eventname = findViewById(R.id.eventname);
         eventdescription = findViewById(R.id.eventdescription);
         eventlocation = findViewById(R.id.eventlocation);
+        eventdate = findViewById(R.id.eventdate);
+        eventtime = findViewById(R.id.eventtime);
         eventpic = findViewById(R.id.eventpic);
         save = findViewById(R.id.save);
 
-       auth = FirebaseAuth.getInstance();
+        //initialize the check boxes
+
+        party = (CheckBox) findViewById(R.id.party);
+        party.setOnClickListener(this);
+        study = (CheckBox) findViewById(R.id.study);
+        study.setOnClickListener(this);
+        sport = (CheckBox) findViewById(R.id.sport);
+        sport.setOnClickListener(this);
+        other = (CheckBox) findViewById(R.id.other);
+        other.setOnClickListener(this);
+
+
+        auth = FirebaseAuth.getInstance();
 
         // Write a message to the database
         database = FirebaseDatabase.getInstance();
         myref = database.getReference(auth.getUid()).child("Event");
-        cref = database.getReference().child("EventLocation");
+        cref = database.getReference().child("EventList");
 
 
         //get the lattitude and longitude from the address;
@@ -134,7 +152,7 @@ public class CreateEventActivity extends MenuActivity {
                  //craete a user object
 
                  Event event = new Event(eventname.getText().toString(),eventdescription.getText().toString(),null,
-                         eventlocation.getText().toString(),lat,lon);
+                         eventlocation.getText().toString(),lat,lon,eventdate.getText().toString(),eventtime.getText().toString(),0,eventtype);
 
                  geoLocate();
 
@@ -202,4 +220,36 @@ public class CreateEventActivity extends MenuActivity {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        Event event = new Event();
+        switch (view.getId()) {
+            case R.id.party:
+                if (party.isChecked()){
+                    eventtype = "party";
+                    event.setEventtype("party");
+                    Toast.makeText(getApplicationContext(), "Party", Toast.LENGTH_LONG).show();}
+                break;
+            case R.id.study:
+                if (study.isChecked()){
+                    eventtype = "study";
+                    event.setEventtype("study");
+                    Toast.makeText(getApplicationContext(), "study", Toast.LENGTH_LONG).show();}
+                break;
+            case R.id.sport:
+                if (sport.isChecked()){
+                    eventtype = "sport";
+                    event.setEventtype("sport");
+                    Toast.makeText(getApplicationContext(), "sport", Toast.LENGTH_LONG).show();}
+                break;
+            case R.id.other:
+                if (other.isChecked()){
+                    eventtype = "other";
+                    event.setEventtype("other");
+                    Toast.makeText(getApplicationContext(), "other", Toast.LENGTH_LONG).show();}
+                break;
+
+        }
+
+    }
 }

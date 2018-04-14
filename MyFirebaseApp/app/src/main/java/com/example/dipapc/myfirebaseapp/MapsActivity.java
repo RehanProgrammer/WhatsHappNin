@@ -52,10 +52,10 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     private FirebaseAuth auth;
     private FirebaseDatabase database;
-    private DatabaseReference mref,cref;
+    private DatabaseReference mref,cref,gref;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private Marker marker;
+    private Marker mym;
     private ArrayList<Event> Eventlist;
     private int counter=0;
 
@@ -107,7 +107,8 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
          Eventlist = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         mref = database.getReference();
-        cref = mref.child("EventLocation");
+        cref = mref.child("EventList");
+
 
         Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
 
@@ -122,10 +123,30 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
                LatLng newLocation = new LatLng(
                        event.getLat(),event.getLon()
                );
-               Marker mym = mMap.addMarker(new MarkerOptions()
-                       .position(newLocation)
-                       .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()));
-               Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);
+               if(event.getEventtype().equals("party")){
+                mym = mMap.addMarker(new MarkerOptions()
+                       .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.balloons))
+                       .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
+                       +event.getEventdate()+",time:"+event.getEventtime()));
+               Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
+               if(event.getEventtype().equals("sport")){
+                   mym = mMap.addMarker(new MarkerOptions()
+                           .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.sport))
+                           .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
+                                   +event.getEventdate()+",time:"+event.getEventtime()));
+                   Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
+               if(event.getEventtype().equals("study")){
+                   mym = mMap.addMarker(new MarkerOptions()
+                           .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.study))
+                           .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
+                                   +event.getEventdate()+",time:"+event.getEventtime()));
+                   Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
+               if(event.getEventtype().equals("other")){
+                   mym = mMap.addMarker(new MarkerOptions()
+                           .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker))
+                           .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
+                                   +event.getEventdate()+",time:"+event.getEventtime()));
+                   Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
 
 
 
@@ -169,11 +190,16 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
                                                   text.setText(arg0.getTitle());
                                                   TextView text1 = (TextView) dialog.findViewById(R.id.eventdescription);
                                                   text1.setText(arg0.getSnippet());
-                                                  Button dialogButton = (Button) dialog.findViewById(R.id.buttonjoin);
+                                                  Button joinButton = (Button) dialog.findViewById(R.id.buttonjoin);
                                                   //if button is clicked, close the custom dialog
-                                                  dialogButton.setOnClickListener(new View.OnClickListener() {
+                                                  joinButton.setOnClickListener(new View.OnClickListener() {
                                                       @Override
                                                       public void onClick(View view) {
+//                                                          Event e = new Event();
+//                                                          int i = e.getGuetNo();
+//                                                          e.setGuetNo(i+1);
+//                                                          mref.child("EventList").child("guetNo").setValue(e.getGuetNo());
+                                                          dialog.dismiss();
 
 
                                                       }

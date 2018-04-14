@@ -9,6 +9,10 @@ public class Event {
     private String description;
     private String photourl;
     private String loaction;
+    private String eventdate;
+    private String eventtime;
+    private String eventtype;
+    private int guetNo;
     private double lat;
     private double lon;
 
@@ -16,13 +20,18 @@ public class Event {
     public Event(){
 
     }
-    public Event(String name, String description, String photourl,String location,double lat,double lon){
+    public Event(String name, String description, String photourl,String location,double lat,double lon,String eventdate,
+                 String eventtime,int guetNo,String eventtype){
         this.name = name;
         this.description = description;
         this.photourl = photourl;
         this.loaction = location;
         this.lat = lat;
         this.lon = lon;
+        this.eventdate = eventdate;
+        this.eventtime = eventtime;
+        this.guetNo = guetNo;
+        this.eventtype = eventtype;
 
 
 
@@ -75,5 +84,37 @@ public class Event {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public int getGuetNo() {
+        return guetNo;
+    }
+
+    public void setGuetNo(int guetNo) {
+        this.guetNo = guetNo;
+    }
+
+    public String getEventdate() {
+        return eventdate;
+    }
+
+    public void setEventdate(String eventdate) {
+        this.eventdate = eventdate;
+    }
+
+    public String getEventtime() {
+        return eventtime;
+    }
+
+    public void setEventtime(String eventtime) {
+        this.eventtime = eventtime;
+    }
+
+    public String getEventtype() {
+        return eventtype;
+    }
+
+    public void setEventtype(String eventtype) {
+        this.eventtype = eventtype;
     }
 }
