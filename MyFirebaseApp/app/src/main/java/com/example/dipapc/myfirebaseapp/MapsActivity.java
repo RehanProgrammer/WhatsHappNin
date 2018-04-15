@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,6 +32,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +51,7 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
     private static final String FINE_L = android.Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_L = android.Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int REQUEST_PERMISSION_CODE = 1234;
+    private static final float DEFAULT_ZOOM = 5f;
 
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
@@ -104,7 +109,7 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-         Eventlist = new ArrayList<>();
+        getDeviceLocation();
         database = FirebaseDatabase.getInstance();
         mref = database.getReference();
         cref = mref.child("EventList");
@@ -254,5 +259,64 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
             }
         }
     }
+    //get device location
+    private void getDeviceLocation() {
+        Log.d(TAG, "getting device location");
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        try {
+            if (mLocationPermissionGranted) {
+                Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete:Found location");
+                            Location currentLocation = (Location) task.getResult();
+                            double lat = currentLocation.getLatitude();
+                            double lon = currentLocation.getLongitude();
+                            LatLng ll = new LatLng(lat, lon);
+                            moveCamera(ll, DEFAULT_ZOOM);
+                            //LatLng lt = getLocationFromAddress(MapActivity.this, EventAddresses);
+                            //Toast.makeText(MapActivity.this, "lat:" + lt.latitude + "lon:" + lt.longitude, Toast.LENGTH_SHORT).show();
+                            // mMap.addMarker(new MarkerOptions().position(lt).title("My location"));
+                            //mMap.moveCamera(CameraUpdateFactory.newLatLng(lt));
+
+                            mMap.setMyLocationEnabled(true);
+
+
+
+                            //mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
+
+
+
+//                            mMap.setMyLocationEnabled(true);
+//                            mMap.addMarker(new MarkerOptions().position(ll).title("My location"));
+//                            mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
+//                            Toast.makeText(MapActivity.this,"lat:"+ll.latitude+"lon:"+ll.longitude,Toast.LENGTH_SHORT).show();
+//                            getAddress(ll.latitude,ll.longitude);
+
+
+                            //move camera here
+                        } else {
+                            Log.d(TAG, "onComplete:Can not find location");
+                            Toast.makeText(MapsActivity.this, "Unable to find location", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+            }
+
+        } catch (SecurityException e) {
+            Log.e(TAG, "Get device location: Security Exception: " + e.getMessage());
+        }
+    }
+
+    public void moveCamera(LatLng latLng, float zoom) {
+        Log.d("TAG", "Moving the camera to lat:" + latLng.latitude + "lon:" + latLng.longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        MarkerOptions mp = new MarkerOptions().position(latLng).title("searched location");
+        mMap.addMarker(mp);
+    }
+
 
 }

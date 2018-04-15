@@ -123,6 +123,8 @@ public class CreateProfileActivity extends MenuActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"profile creating");
+                Validate(name.getText().toString(),email.getText().toString(),description.getText().toString());
+
 
                 //craete a user object
                 user = new User(name.getText().toString(),email.getText().toString(), description.getText().toString(),downloadUrl.toString());
@@ -135,6 +137,17 @@ public class CreateProfileActivity extends MenuActivity {
             }
 
         });
+
+    }
+
+    private void Validate(String e, String p, String d) {
+
+
+        if (e.isEmpty() || p.isEmpty() || d.isEmpty()) {
+            Toast.makeText(CreateProfileActivity.this, "The fields has to be filled", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
     }
 }
