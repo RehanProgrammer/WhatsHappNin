@@ -43,9 +43,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
+
 
     private static final String TAG = "MapActivity";
     private static final String FINE_L = android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -54,15 +57,17 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
     private static final float DEFAULT_ZOOM = 5f;
 
     private Boolean mLocationPermissionGranted = false;
-    private GoogleMap mMap;
+
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference mref,cref,gref;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
-    private Marker mym;
-    private ArrayList<Event> Eventlist;
-    private int counter=0;
+    private GoogleMap mMap;
+    private Marker mym, arg;
+    private Event event;
+    private int counter;
+    private HashMap<String,String> key;
+    private String k;
 
 
     @Override
@@ -71,8 +76,165 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
-       intMap();
-       getLocationPermission();
+        intMap();
+        getLocationPermission();
+
+
+
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        key = new HashMap<>();
+        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
+        getDeviceLocation();
+
+        database = FirebaseDatabase.getInstance();
+        mref = database.getReference();
+        cref = mref.child("EventList");
+        cref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(final DataSnapshot dataSnapshot, String s) {
+
+
+                Event event = dataSnapshot.getValue(Event.class);
+                String ti = event.getName();
+                counter = event.getGuetNo();
+                key.put(event.getName(),dataSnapshot.getKey().toString());
+                //String si = event.getLoaction()+"\n"+event.getDescription();
+                LatLng newLocation = new LatLng(
+                        event.getLat(),event.getLon()
+                );
+
+
+                Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);
+                // if it is a party event
+                if(event.getEventtype().equals("party")){
+                    mym = mMap.addMarker(new MarkerOptions()
+                            .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.balloons))
+                            .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate:"
+                                    +event.getEventdate()+"\ntime:"+event.getEventtime()+"\nGuest No:"+event.getGuetNo()));
+                    //Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);
+                }
+                //if it is a sport event
+                if(event.getEventtype().equals("sport")){
+                    mym = mMap.addMarker(new MarkerOptions()
+                            .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.sport))
+                            .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate:"
+                                    +event.getEventdate()+"\ntime:"+event.getEventtime()+"\nGuest No:"+event.getGuetNo()));
+                    //Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);
+                }
+                //if it is a study event
+                if(event.getEventtype().equals("study")){
+                    mym = mMap.addMarker(new MarkerOptions()
+                            .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.book))
+                            .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate:"
+                                    +event.getEventdate()+"\ntime:"+event.getEventtime()+"\nGuest No:"+event.getGuetNo()));
+                    //Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);
+                }
+                //if it is any other type of event
+                if(event.getEventtype().equals("other")){
+                    mym = mMap.addMarker(new MarkerOptions()
+                            .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.other))
+                            .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate:"
+                                    +event.getEventdate()+"\ntime:"+event.getEventtime()+"\nGuest No:"+event.getGuetNo()));
+                    Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
+
+
+
+//
+
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker arg0) {
+                print(key);
+
+
+                arg = arg0;
+                if (key.containsKey(arg0.getTitle()))
+                {
+                    //suint g = counter++;
+                    k = key.get(arg.getTitle());
+                    Log.d("value:",k);
+
+
+                }
+
+
+
+                final Dialog dialog = new Dialog(MapsActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog);
+                dialog.setTitle("Title...");
+
+                //set the custom dialog components - text, image and button
+                TextView text = (TextView) dialog.findViewById(R.id.eventtitle);
+                text.setText(arg0.getTitle());
+                TextView text1 = (TextView) dialog.findViewById(R.id.eventdescription);
+                text1.setText(arg0.getSnippet());
+                Button joinButton = (Button) dialog.findViewById(R.id.buttonjoin);
+                //if button is clicked, close the custom dialog
+                joinButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        int g = counter + 1;
+                        Log.d("value:",k);
+
+                        mref.child("EventList").child(k).child("guetNo").setValue(g);
+                        // ev.setGuetNo(ev.getGuetNo()+1);
+
+
+
+                        //Toast.makeText(MapsActivity.this,"The reference clicked"+s, Toast.LENGTH_SHORT).show();
+
+
+
+
+
+                        dialog.dismiss();
+
+
+                    }
+                });
+                dialog.show();
+            }
+
+
+            // Add a marker in Sydney and move the camera
+            //LatLng sydney = new LatLng(-34, 151);
+
+
+        });
+
 
 
     }
@@ -94,131 +256,6 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
         });*/
 
     }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        getDeviceLocation();
-        database = FirebaseDatabase.getInstance();
-        mref = database.getReference();
-        cref = mref.child("EventList");
-
-
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
-
-
-       cref.addChildEventListener(new ChildEventListener() {
-           @Override
-           public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-               counter++;
-               Event event = dataSnapshot.getValue(Event.class);
-               String ti = event.getName();
-               //String si = event.getLoaction()+"\n"+event.getDescription();
-               LatLng newLocation = new LatLng(
-                       event.getLat(),event.getLon()
-               );
-               if(event.getEventtype().equals("party")){
-                mym = mMap.addMarker(new MarkerOptions()
-                       .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.balloons))
-                       .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
-                       +event.getEventdate()+",time:"+event.getEventtime()));
-               Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
-               if(event.getEventtype().equals("sport")){
-                   mym = mMap.addMarker(new MarkerOptions()
-                           .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.sport))
-                           .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
-                                   +event.getEventdate()+",time:"+event.getEventtime()));
-                   Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
-               if(event.getEventtype().equals("study")){
-                   mym = mMap.addMarker(new MarkerOptions()
-                           .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.study))
-                           .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
-                                   +event.getEventdate()+",time:"+event.getEventtime()));
-                   Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
-               if(event.getEventtype().equals("other")){
-                   mym = mMap.addMarker(new MarkerOptions()
-                           .position(newLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapmarker))
-                           .title(ti).snippet("address:"+event.getLoaction()+"\n"+"description:"+event.getDescription()+"\ndate"
-                                   +event.getEventdate()+",time:"+event.getEventtime()));
-                   Log.d("Map:",dataSnapshot.toString()+dataSnapshot.getChildrenCount()+counter);}
-
-
-
-
-
-           }
-
-           @Override
-           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-
-           }
-
-           @Override
-           public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-           }
-
-           @Override
-           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-           }
-
-           @Override
-           public void onCancelled(DatabaseError databaseError) {
-
-           }
-       });
-
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-                                              @Override
-                                              public void onInfoWindowClick(Marker arg0) {
-
-                                                  final Dialog dialog = new Dialog(MapsActivity.this);
-                                                  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                  dialog.setContentView(R.layout.dialog);
-                                                  dialog.setTitle("Title...");
-                                                  //set the custom dialog components - text, image and button
-                                                  TextView text = (TextView) dialog.findViewById(R.id.eventtitle);
-                                                  text.setText(arg0.getTitle());
-                                                  TextView text1 = (TextView) dialog.findViewById(R.id.eventdescription);
-                                                  text1.setText(arg0.getSnippet());
-                                                  Button joinButton = (Button) dialog.findViewById(R.id.buttonjoin);
-                                                  //if button is clicked, close the custom dialog
-                                                  joinButton.setOnClickListener(new View.OnClickListener() {
-                                                      @Override
-                                                      public void onClick(View view) {
-//                                                          Event e = new Event();
-//                                                          int i = e.getGuetNo();
-//                                                          e.setGuetNo(i+1);
-//                                                          mref.child("EventList").child("guetNo").setValue(e.getGuetNo());
-                                                          dialog.dismiss();
-
-
-                                                      }
-                                                  });
-                                                  dialog.show();
-                                              }
-
-
-                                              // Add a marker in Sydney and move the camera
-                                              //LatLng sydney = new LatLng(-34, 151);
-
-                                          });
-    }
-
 
     // we need to explicitly get the permissions
     private void getLocationPermission() {
@@ -259,6 +296,7 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
             }
         }
     }
+
     //get device location
     private void getDeviceLocation() {
         Log.d(TAG, "getting device location");
@@ -276,24 +314,13 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
                             double lon = currentLocation.getLongitude();
                             LatLng ll = new LatLng(lat, lon);
                             moveCamera(ll, DEFAULT_ZOOM);
-                            //LatLng lt = getLocationFromAddress(MapActivity.this, EventAddresses);
-                            //Toast.makeText(MapActivity.this, "lat:" + lt.latitude + "lon:" + lt.longitude, Toast.LENGTH_SHORT).show();
-                            // mMap.addMarker(new MarkerOptions().position(lt).title("My location"));
-                            //mMap.moveCamera(CameraUpdateFactory.newLatLng(lt));
+
 
                             mMap.setMyLocationEnabled(true);
 
 
 
-                            //mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
 
-
-
-//                            mMap.setMyLocationEnabled(true);
-//                            mMap.addMarker(new MarkerOptions().position(ll).title("My location"));
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
-//                            Toast.makeText(MapActivity.this,"lat:"+ll.latitude+"lon:"+ll.longitude,Toast.LENGTH_SHORT).show();
-//                            getAddress(ll.latitude,ll.longitude);
 
 
                             //move camera here
@@ -314,9 +341,27 @@ public class MapsActivity extends MenuActivity implements OnMapReadyCallback{
     public void moveCamera(LatLng latLng, float zoom) {
         Log.d("TAG", "Moving the camera to lat:" + latLng.latitude + "lon:" + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        MarkerOptions mp = new MarkerOptions().position(latLng).title("searched location");
+        MarkerOptions mp = new MarkerOptions().position(latLng).title("My location").icon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
         mMap.addMarker(mp);
     }
+
+    public static void print(Map<String,String> map)
+    {
+        if (map.isEmpty())
+        {
+            System.out.println("map is empty");
+        }
+
+        else
+        {
+            Log.d("MAP", map.toString());
+        }
+    }
+
+    public void addGuest(String s){
+
+    }
+
 
 
 }

@@ -39,7 +39,7 @@ public class ProfileActivity extends MenuActivity {
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference(auth.getUid());
+        DatabaseReference ref = database.getReference().child("profile").child(auth.getUid());
 
         ref.addValueEventListener(new ValueEventListener() {
             @Override

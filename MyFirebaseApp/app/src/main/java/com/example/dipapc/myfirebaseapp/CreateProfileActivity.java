@@ -32,6 +32,7 @@ public class CreateProfileActivity extends MenuActivity {
 
     private static final String TAG = "CreateProfileActivity";
     private static final int RC_PHOTO_PICKER = 123;
+    private final int PICK_IMAGE_REQUEST = 71;
 
     private FirebaseDatabase database;
 
@@ -45,41 +46,66 @@ public class CreateProfileActivity extends MenuActivity {
 
 
 
-    private Button save;
+    private Button save,upload;
     private EditText name;
     private EditText email;
     private EditText description;
     private ImageView profilepic;
 
-    private Uri downloadUrl;
+    //private Uri downloadUrl,selectedimg;
+    private Uri filePath;
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
-            //get te url for storage
-            Uri selectedimg = data.getData();
-            //get reference for the storage
-            StorageReference photoref = sref.child(selectedimg.getLastPathSegment());
-            photoref.putFile(selectedimg).addOnSuccessListener(this,new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    downloadUrl = taskSnapshot.getDownloadUrl();
-                    user = new User();
-                    user.setPhotourl(downloadUrl.toString());
-
-
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                }
-            });
-        }
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            filePath = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                profilepic.setImageBitmap(bitmap);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
+
+
+
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
+//            //get te url for storage
+//            selectedimg = data.getData();
+//            Log.d("Photo",selectedimg.toString());
+//            //get reference for the storage
+//            StorageReference photoref = sref.child(selectedimg.getLastPathSegment());
+//            photoref.putFile(selectedimg).addOnSuccessListener(CreateProfileActivity.this,new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    downloadUrl = taskSnapshot.getDownloadUrl();
+//                    Log.d("TAG",downloadUrl.toString());
+////                    user = new User(downloadUrl.toString());
+////                    user.setPhotourl(downloadUrl.toString());
+//
+//
+//
+//
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//
+//                }
+//            });
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -88,7 +114,7 @@ public class CreateProfileActivity extends MenuActivity {
         setContentView(R.layout.activity_create_profile);
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        mRef = database.getReference(auth.getUid());
+        mRef = database.getReference().child("profile").child(auth.getUid());
 
         storage = FirebaseStorage.getInstance();
         sref = storage.getReference().child("photos");
@@ -96,6 +122,7 @@ public class CreateProfileActivity extends MenuActivity {
 
         //initialize the views
         save = (Button)findViewById(R.id.buttonSave);
+        upload = (Button)findViewById(R.id.upload);
         name = (EditText)findViewById(R.id.name);
         email = (EditText)findViewById(R.id.email);
         description = (EditText)findViewById(R.id.description);
@@ -104,16 +131,37 @@ public class CreateProfileActivity extends MenuActivity {
         profilepic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                //intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent,"Select Picture"),PICK_IMAGE_REQUEST);
             }
 
 
-
         });
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(filePath!=null){
+                    sref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(CreateProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(CreateProfileActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+
+
+            }
+        });
 
 
 
@@ -123,14 +171,16 @@ public class CreateProfileActivity extends MenuActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"profile creating");
-                Validate(name.getText().toString(),email.getText().toString(),description.getText().toString());
+                //Validate(name.getText().toString(),email.getText().toString(),description.getText().toString());
+                //Log.d(TAG,downloadUrl.toString());
 
 
                 //craete a user object
-                user = new User(name.getText().toString(),email.getText().toString(), description.getText().toString(),downloadUrl.toString());
+                user = new User(name.getText().toString(),email.getText().toString(), description.getText().toString(),filePath.toString());
+
                 mRef.setValue(user);
                 Log.d(TAG,"profile created");
-                startActivity(new Intent(CreateProfileActivity.this,ProfileActivity.class));
+               startActivity(new Intent(CreateProfileActivity.this,HomeActivity.class));
 
 
 

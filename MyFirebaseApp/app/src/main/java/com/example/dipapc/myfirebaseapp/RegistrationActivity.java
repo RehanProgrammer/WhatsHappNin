@@ -48,31 +48,39 @@ public class RegistrationActivity extends AppCompatActivity {
                 //get the values
                 String uemail = email.getText().toString();
                 String upass = password.getText().toString();
-                Authenticate(uemail,upass);
-                mAuth.createUserWithEmailAndPassword(uemail,upass).addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            finish();
-                            startActivity(new Intent(RegistrationActivity.this,MainActivity.class));
-                        } else {
-                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                Toast.makeText(getApplicationContext(), "You are already registered,Please sign in", Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, "Already registered");
+                if(Authenticate(uemail,upass)) {
+                    mAuth.createUserWithEmailAndPassword(uemail, upass).addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "createUserWithEmail:success");
                                 finish();
-                                startActivity(new Intent(RegistrationActivity.this,MainActivity.class));
-
+                                startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
                             } else {
-                                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    Toast.makeText(getApplicationContext(), "You are already registered,Please sign in", Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "Already registered");
+                                    finish();
+                                    startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+
                             }
+
 
                         }
 
+                        ;
+                    });
+                }
+                else{
+                    startActivity(new Intent(RegistrationActivity.this, RegistrationActivity.class));
 
-                    };
-                });
+
+                }
 
 
 
@@ -83,30 +91,32 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
     }
-    private void Authenticate(String e , String p){
-        if (e.isEmpty()) {
+    private boolean Authenticate(String e , String p){
+        if (e == null) {
             email.setError("Email is required");
             email.requestFocus();
-            return;
+            return false;
         }
 
-//        if (!Patterns.EMAIL_ADDRESS.matcher(e).matches()) {
-//            email.setError("Please enter a valid email");
-//            email.requestFocus();
-//            return;
-//        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(e).matches()) {
+           email.setError("Please enter a valid email");
+            email.requestFocus();
+            return false;
+        }
 
-        if (p.isEmpty()) {
+        if (p == null) {
             password.setError("Password is required");
             password.requestFocus();
-            return;
+            return false;
         }
 
         if (p.length() < 6) {
             password.setError("Minimum length of password should be 6");
             password.requestFocus();
-            return;
+            return false;
         }
+
+        return true;
 
 
     }

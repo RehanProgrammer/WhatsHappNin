@@ -13,10 +13,11 @@ public class User {
     private String description;
     private String photourl;
 
-
     public User(){
 
     }
+
+
 
     public User(String name, String email,String description,String photourl){
         this.name = name;

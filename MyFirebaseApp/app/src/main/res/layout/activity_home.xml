@@ -158,7 +158,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Event Dashboard"
+                    android:text="Hap Dashboard"
                     android:textColor="@color/cardview_light_background"
                     android:textColorLink="@android:color/background_light"
                     android:textSize="15sp"
@@ -209,7 +209,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Post Event"
+                    android:text="Post Hap"
                     android:textColor="@android:color/background_light"
                     android:textSize="15sp"
                     android:textStyle="bold" />
